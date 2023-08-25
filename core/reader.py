@@ -15,7 +15,7 @@ class Reader:
         
         self.position = ReaderPosition()
         
-    def setChapter()
+    #def setChapter()
         
 class ReaderPosition:
     
