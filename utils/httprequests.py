@@ -39,7 +39,7 @@ def _getSerializer(type: str) -> Callable[[requests.Response], Any]:
 def getRequest(url: str, returningResponseType: str, stream: bool = False) -> Optional[Any]:
     
     response = requests.get(url, stream=stream)
-    #print(response.status_code)
+    print(url)
     if response.status_code != 200:
         
         return None

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from core.mangatypes import MangaInfo, BranchInfo, ChapterInfo, PageInfo, SliceInfo, ChapterPages
 from utils.httprequests import getRequest
 
@@ -18,6 +18,7 @@ _mangaThumbnailStart = "https://img.newmanga.org/Large/webp/"
 
 _mangaBranchUrl = "https://api.newmanga.org/v3/branches/{BranchId}/chapters/all"
 _mangaChapterUrl = "https://api.newmanga.org/v3/chapters/{ChapterId}/pages"
+_mangaPageUrl = "https://storage.newmanga.org/origin_proxy/{Origin}/{ChapterId}/{PagePath}"
 
 def _normalizeMangaUrl(mangaName: str) -> str:
 
@@ -41,7 +42,7 @@ def getMangaName(mangaUrl: str) -> str:
 
 def getChapterPages(chapterId: int) -> ChapterPages:
     
-    rawInfo = getRequest(_mangaChapterUrl.replace("ChapterId", str(chapterId)), "JSON")
+    rawInfo = getRequest(_mangaChapterUrl.replace("{ChapterId}", str(chapterId)), "JSON")
     
     pages = []
     for rawPageInfo in rawInfo["pages"]:
@@ -60,7 +61,7 @@ def getChapterPages(chapterId: int) -> ChapterPages:
             PageInfo(rawPageInfo["index"], slices)
         )
         
-    return ChapterPages(rawPageInfo["origin"], pages)
+    return ChapterPages(chapterId, rawInfo["origin"], pages)
     
 
 def getMangaBranch(branchId: int) -> list[ChapterInfo]:
@@ -85,6 +86,21 @@ def getMangaBranchInfo(mangaName: str) -> BranchInfo:
     rawInfo: dict = getRequest( _normalizeMangaUrl(mangaName), "JSON")
     
     return BranchInfo(rawInfo["branches"][0]["id"])
+
+
+def getMangaPageUrl(origin: str, chapterId: int, pagePath: str) -> str:
+
+    return _mangaPageUrl.replace("{Origin}", origin).replace("{ChapterId}", str(chapterId)).replace("{PagePath}", pagePath)
+
+
+def getMangaPage(origin: str, chapterId: int, pagePath: str) -> Optional[Any]:
+    
+    url = getMangaPageUrl(origin, chapterId, pagePath)
+    
+    imageBytes = getRequest(url, "BYTE", True)
+    
+    return imageBytes
+        
 
 def getMangaInfo(mangaName: str) -> Optional[MangaInfo]:
     """

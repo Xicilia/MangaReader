@@ -21,7 +21,7 @@ class BotBase(commands.Bot):
 
     async def setup_hook(self):
 
-        testGuild = discord.Object(id=int(os.getenv("TESTGUILDID")))  
+        testGuild = discord.Object(id=1085257920410812446)  
         self.tree.copy_global_to(guild=testGuild)
 
 

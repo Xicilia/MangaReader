@@ -47,5 +47,6 @@ class PageInfo:
 @dataclass
 class ChapterPages:
     
+    chapterId: int
     origin: str
     pages: list[PageInfo]
